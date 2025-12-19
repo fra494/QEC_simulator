@@ -6,17 +6,17 @@ from qiskit.quantum_info import Kraus, Pauli
 
 
     
-def pauli_channel_circuit_model(pX, pY, pZ):
+def pauli_channel_circuit_model(p):
 
     q = QuantumRegister(9, 'q')
     qc = QuantumCircuit(q)
 
     for i in range(9):
-        if np.random.rand() < pX:
+        if np.random.rand() < p:
             qc.x(q[i])
-        if np.random.rand() < pY:
+        if np.random.rand() < p:
             qc.y(q[i])
-        if np.random.rand() < pZ:
+        if np.random.rand() < p:
             qc.z(q[i])
 
     qc.barrier()
@@ -24,12 +24,23 @@ def pauli_channel_circuit_model(pX, pY, pZ):
     return qc
 
 
-def quantum_channel(input_circuit):
+def quantum_pauli_channel(input_circuit):
 
-    pX = 0.05
-    pY = 0
-    pZ = 0
+    p = 0.01
 
-    simulated_channel = input_circuit.compose(pauli_channel_circuit_model(pX, pY, pZ))
+    simulated_channel = input_circuit.compose(pauli_channel_circuit_model(p))
+
+    return simulated_channel
+    
+
+def quantum_depolarizing_channel(input_circuit):
+
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
+
+    qc.delay(100)
+    qc.barrier()
+
+    simulated_channel = input_circuit.compose(qc)
 
     return simulated_channel

@@ -30,7 +30,7 @@ def shor_encoding(input_circuit):
 
     encoded_circuit = input_circuit.compose(qc)
 
-    return encoded_circuit
+    return encoded_circuit, qc
 
 
 

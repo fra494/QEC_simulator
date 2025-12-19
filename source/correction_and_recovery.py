@@ -37,3 +37,19 @@ def shor_correction(input_circuit):
     return correction_circuit
 
 
+def decode_no_correction(input_circuit, encoding_circuit):
+
+    #encoded_qubits = QuantumRegister(9, 'q')
+    qc = encoding_circuit.inverse()
+    c = ClassicalRegister(1, 'c')
+
+    #qc.h(encoded_qubits[0])
+
+    qc.barrier()
+
+    decoder_circuit = input_circuit.compose(qc)
+
+    decoder_circuit.add_register(c)
+    decoder_circuit.measure([0], [0])
+
+    return decoder_circuit
