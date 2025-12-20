@@ -2,6 +2,7 @@ from qiskit.quantum_info import Kraus
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
 
 import numpy as np
+from random import randint
 from qiskit.quantum_info import Kraus, Pauli
 
 
@@ -28,12 +29,14 @@ def quantum_pauli_channel(input_circuit):
 
     p = 0.01
 
-    simulated_channel = input_circuit.compose(pauli_channel_circuit_model(p))
+    qc = pauli_channel_circuit_model(p)
 
-    return simulated_channel
+    simulated_channel = input_circuit.compose(qc)
+
+    return simulated_channel, qc
     
 
-def quantum_depolarizing_channel(input_circuit):
+def quantum_delay_channel_all_qb(input_circuit):
 
     q = QuantumRegister(9, 'q')
     qc = QuantumCircuit(q)
@@ -43,4 +46,29 @@ def quantum_depolarizing_channel(input_circuit):
 
     simulated_channel = input_circuit.compose(qc)
 
-    return simulated_channel
+    return simulated_channel, qc
+
+
+def quantum_delay_channel_one_qb(input_circuit):
+
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
+
+    qc.delay(100, q[randint(0,8)])
+    qc.barrier()
+
+    simulated_channel = input_circuit.compose(qc)
+
+    return simulated_channel, qc
+
+
+def ideal_empty_channel(input_circuit):
+
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
+
+    qc.barrier()
+
+    simulated_channel = input_circuit.compose(qc)
+
+    return simulated_channel, qc

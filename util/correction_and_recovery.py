@@ -34,7 +34,7 @@ def shor_correction(input_circuit):
     correction_circuit.add_register(c)
     correction_circuit.measure([0], [0])
 
-    return correction_circuit
+    return correction_circuit, qc
 
 
 def decode_no_correction(input_circuit, encoding_circuit):
@@ -52,4 +52,4 @@ def decode_no_correction(input_circuit, encoding_circuit):
     decoder_circuit.add_register(c)
     decoder_circuit.measure([0], [0])
 
-    return decoder_circuit
+    return decoder_circuit, qc
