@@ -2,54 +2,60 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 
 def shor_correction(input_circuit):
 
-    encoded_qubits = QuantumRegister(9, 'q')
-    qc = QuantumCircuit(encoded_qubits)
     c = ClassicalRegister(1, 'c')
+
+    q = input_circuit.qubits
+    input_circuit.add_register(c)
 
     # gates
-    qc.cx(encoded_qubits[3], encoded_qubits[4])
-    qc.cx(encoded_qubits[6], encoded_qubits[7])
-    qc.cx(encoded_qubits[0], encoded_qubits[1])
-    qc.cx(encoded_qubits[3], encoded_qubits[5])
-    qc.cx(encoded_qubits[6], encoded_qubits[8])
-    qc.cx(encoded_qubits[0], encoded_qubits[2])
+    input_circuit.cx(q[3], q[4])
+    input_circuit.cx(q[6], q[7])
+    input_circuit.cx(q[0], q[1])
+    input_circuit.cx(q[3], q[5])
+    input_circuit.cx(q[6], q[8])
+    input_circuit.cx(q[0], q[2])
 
-    qc.ccx(encoded_qubits[4], encoded_qubits[5], encoded_qubits[3])
-    qc.ccx(encoded_qubits[7], encoded_qubits[8], encoded_qubits[6])
-    qc.ccx(encoded_qubits[1], encoded_qubits[2], encoded_qubits[0])
+    input_circuit.ccx(q[4], q[5], q[3])
+    input_circuit.ccx(q[7], q[8], q[6])
+    input_circuit.ccx(q[1], q[2], q[0])
 
-    qc.h(encoded_qubits[3])
-    qc.h(encoded_qubits[6])
-    qc.h(encoded_qubits[0])
+    input_circuit.h(q[3])
+    input_circuit.h(q[6])
+    input_circuit.h(q[0])
 
-    qc.cx(encoded_qubits[0], encoded_qubits[3])
-    qc.cx(encoded_qubits[0], encoded_qubits[6])
+    input_circuit.cx(q[0], q[3])
+    input_circuit.cx(q[0], q[6])
 
-    qc.ccx(encoded_qubits[3], encoded_qubits[6], encoded_qubits[0])
+    input_circuit.ccx(q[3], q[6], q[0])
 
-    qc.barrier()
+    input_circuit.barrier()
 
-    correction_circuit = input_circuit.compose(qc)
-
-    correction_circuit.add_register(c)
-    correction_circuit.measure([0], [0])
-
-    return correction_circuit, qc
+    input_circuit.measure([0], [0])
 
 
-def decode_no_correction(input_circuit, encoding_circuit):
 
-    #encoded_qubits = QuantumRegister(9, 'q')
-    qc = encoding_circuit.inverse()
+def decode_no_correction(input_circuit):
+
     c = ClassicalRegister(1, 'c')
 
-    #qc.h(encoded_qubits[0])
+    q = input_circuit.qubits
+    input_circuit.add_register(c)
 
-    qc.barrier()
+    #gates
 
-    decoder_circuit = input_circuit.compose(qc)
+    input_circuit.cx(q[0], q[2])
+    input_circuit.cx(q[0], q[1])
+    input_circuit.h(q[0])
 
-    decoder_circuit.add_register(c)
-    decoder_circuit.measure([0], [0])
+    input_circuit.cx(q[3], q[5])
+    input_circuit.cx(q[3], q[4])
+    input_circuit.h(q[3])
 
-    return decoder_circuit, qc
+    input_circuit.cx(q[6], q[8])
+    input_circuit.cx(q[6], q[7])
+    input_circuit.h(q[6])
+
+    input_circuit.cx(q[0], q[6])
+    input_circuit.cx(q[0], q[3])
+
+    input_circuit.measure([0], [0])

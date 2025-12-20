@@ -11,24 +11,25 @@ from util.correction_and_recovery import shor_correction, decode_no_correction
 import numpy as np
 
 
+
 def no_error(alpha, beta):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = ideal_empty_channel(encoded)
-    full_circuit, decoding_circuit = shor_correction(after_channel)
-    full_circuit.draw(output='mpl', filename="./circuits_img/no_noise.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    ideal_empty_channel(qc)
+    shor_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/no_noise.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
     sim = AerSimulator()
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
@@ -36,62 +37,65 @@ def no_error(alpha, beta):
 
 def uniform_pauli_channel_error(alpha, beta, p):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = quantum_pauli_channel(encoded)
-    full_circuit, decoding_circuit = shor_correction(after_channel)
-    full_circuit.draw(output='mpl', filename="./circuits_img/uniform_pauli_channel.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    quantum_pauli_channel(qc, p)
+    shor_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/uniform_pauli_channel.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
     sim = AerSimulator()
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
+
 
 def uniform_pauli_channel_error_nc(alpha, beta, p):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = quantum_pauli_channel(encoded)
-    full_circuit, decoding_circuit = decode_no_correction(after_channel, encoding_circuit)
-    full_circuit.draw(output='mpl', filename="./circuits_img/uniform_pauli_channel_nc.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    quantum_pauli_channel(qc, p)
+    decode_no_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/uniform_pauli_channel_nc.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
     sim = AerSimulator()
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
 
+    
+
 def depolarizing_channel_error(alpha, beta, p):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = quantum_delay_channel_all_qb(encoded)
-    #after_channel, channel_circuit = quantum_delay_channel_one_qb(encoded)
-    full_circuit, decoding_circuit = shor_correction(after_channel)
-    full_circuit.draw(output='mpl', filename="./circuits_img/depolarizing_channel.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    shor_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/depolarizing_channel.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
@@ -99,26 +103,27 @@ def depolarizing_channel_error(alpha, beta, p):
     error = depolarizing_error(p, 1)
     noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
     sim = AerSimulator(noise_model=noise_model)
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
+
 
 
 def depolarizing_channel_error_nc(alpha, beta, p):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = quantum_delay_channel_all_qb(encoded)
-    #after_channel, channel_circuit = quantum_delay_channel_one_qb(encoded)
-    full_circuit, decoding_circuit = decode_no_correction(after_channel, encoding_circuit)
-    full_circuit.draw(output='mpl', filename="./circuits_img/depolarizing_channel_nc.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    decode_no_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/depolarizing_channel_nc.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
@@ -126,78 +131,83 @@ def depolarizing_channel_error_nc(alpha, beta, p):
     error = depolarizing_error(p, 1)
     noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
     sim = AerSimulator(noise_model=noise_model)
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
+
 
 
 def amplitude_damping_channel_error(alpha, beta, a):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    #after_channel, channel_circuit = quantum_delay_channel_all_qb(encoded)
-    after_channel, channel_circuit = quantum_delay_channel_one_qb(encoded)
-    full_circuit, decoding_circuit = shor_correction(after_channel)
-    full_circuit.draw(output='mpl', filename="./circuits_img/amplitude_damping_channel.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    shor_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/amplitude_damping_channel.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
     noise_model = NoiseModel()
-    error = amplitude_damping_error(a, 1)
+    error = amplitude_damping_error(a)
     noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
     sim = AerSimulator(noise_model=noise_model)
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
+
+
 
 def amplitude_damping_channel_error_nc(alpha, beta, a):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    #after_channel, channel_circuit = quantum_delay_channel_all_qb(encoded)
-    after_channel, channel_circuit = quantum_delay_channel_one_qb(encoded)
-    full_circuit, decoding_circuit = decode_no_correction(after_channel, encoding_circuit)
-    full_circuit.draw(output='mpl', filename="./circuits_img/amplitude_damping_channel_nc.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    decode_no_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/amplitude_damping_channel_nc.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
     noise_model = NoiseModel()
-    error = amplitude_damping_error(a, 1)
+    error = amplitude_damping_error(a)
     noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
     sim = AerSimulator(noise_model=noise_model)
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()
 
+
+
 def phase_damping_channel_error(alpha, beta, b):
 
-    q_in = QuantumRegister(1, 'q_in')
-    prep = QuantumCircuit(q_in)
-    c = ClassicalRegister(1, 'c')
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
 
     #COSTRUZIONE DEL CIRCUITO
 
-    prep.initialize([alpha, beta], q_in[0])
-    encoded, encoding_circuit = shor_encoding(prep)
-    after_channel, channel_circuit = quantum_delay_channel_all_qb(encoded)
-    #after_channel, channel_circuit = quantum_delay_channel_one_qb(encoded)
-    full_circuit, decoding_circuit = shor_correction(after_channel)
-    full_circuit.draw(output='mpl', filename="./circuits_img/phase_damping_channel.png")
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    shor_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/phase_damping_channel.png")
 
     #ESECUZIONE DEL CIRCUITO SU SIMULATORE
 
@@ -205,7 +215,36 @@ def phase_damping_channel_error(alpha, beta, b):
     error = phase_damping_error(b)
     noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
     sim = AerSimulator(noise_model=noise_model)
-    transpiled_circuit = transpile(full_circuit, sim)
+    transpiled_circuit = transpile(qc, sim)
+    result = sim.run(transpiled_circuit, shots=100).result()
+
+    return result.get_counts()
+
+
+
+
+def phase_damping_channel_error_nc(alpha, beta, b):
+
+    q = QuantumRegister(9, 'q')
+    qc = QuantumCircuit(q)
+
+    #COSTRUZIONE DEL CIRCUITO
+
+    qc.initialize([alpha, beta], q[0])
+    shor_encoding(qc)
+    #quantum_delay_channel_all_qb(qc)
+    quantum_delay_channel_one_qb(qc)
+    decode_no_correction(qc)
+
+    qc.draw(output='mpl', filename="./circuits_img/phase_damping_channel_nc.png")
+
+    #ESECUZIONE DEL CIRCUITO SU SIMULATORE
+
+    noise_model = NoiseModel()
+    error = phase_damping_error(b)
+    noise_model.add_all_qubit_quantum_error(error, instructions=['delay'])
+    sim = AerSimulator(noise_model=noise_model)
+    transpiled_circuit = transpile(qc, sim)
     result = sim.run(transpiled_circuit, shots=100).result()
 
     return result.get_counts()

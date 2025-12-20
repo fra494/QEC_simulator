@@ -6,69 +6,43 @@ from random import randint
 from qiskit.quantum_info import Kraus, Pauli
 
 
-    
-def pauli_channel_circuit_model(p):
 
-    q = QuantumRegister(9, 'q')
-    qc = QuantumCircuit(q)
+def quantum_pauli_channel(input_circuit, p):
+
+    q = input_circuit.qubits
 
     for i in range(9):
         if np.random.rand() < p:
-            qc.x(q[i])
+            input_circuit.x(q[i])
         if np.random.rand() < p:
-            qc.y(q[i])
+            input_circuit.y(q[i])
         if np.random.rand() < p:
-            qc.z(q[i])
+            input_circuit.z(q[i])
 
-    qc.barrier()
-        
-    return qc
+    input_circuit.barrier()
 
-
-def quantum_pauli_channel(input_circuit):
-
-    p = 0.01
-
-    qc = pauli_channel_circuit_model(p)
-
-    simulated_channel = input_circuit.compose(qc)
-
-    return simulated_channel, qc
     
 
 def quantum_delay_channel_all_qb(input_circuit):
 
-    q = QuantumRegister(9, 'q')
-    qc = QuantumCircuit(q)
+    q = input_circuit.qubits
 
-    qc.delay(100)
-    qc.barrier()
+    input_circuit.delay(100)
+    input_circuit.barrier()
 
-    simulated_channel = input_circuit.compose(qc)
-
-    return simulated_channel, qc
 
 
 def quantum_delay_channel_one_qb(input_circuit):
 
-    q = QuantumRegister(9, 'q')
-    qc = QuantumCircuit(q)
+    q = input_circuit.qubits
 
-    qc.delay(100, q[randint(0,8)])
-    qc.barrier()
+    input_circuit.delay(100, q[randint(0,8)])
+    input_circuit.barrier()
 
-    simulated_channel = input_circuit.compose(qc)
-
-    return simulated_channel, qc
 
 
 def ideal_empty_channel(input_circuit):
 
-    q = QuantumRegister(9, 'q')
-    qc = QuantumCircuit(q)
+    q = input_circuit.qubits
 
-    qc.barrier()
-
-    simulated_channel = input_circuit.compose(qc)
-
-    return simulated_channel, qc
+    input_circuit.barrier()
