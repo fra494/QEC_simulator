@@ -1,90 +1,99 @@
 # Quantum Error Correction Library – Shor Code
 
-Libreria Python per la simulazione della **quantum error correction** basata sul **codice di Shor a 9 qubit**. Il progetto fornisce strumenti modulari per l’encoding, la simulazione di canali rumorosi e il decoding con o senza correzione degli errori.
+Libreria Python per la simulazione della **quantum error correction** basata sul **codice di Shor a 9 qubit**. Il progetto fornisce strumenti modulari per costruire, trasmettere e decodificare circuiti quantistici soggetti a rumore, con particolare attenzione alla separazione tra encoding, canale e decoding.
 
-La libreria è pensata per scopi di ricerca, didattici e di sperimentazione, ed è progettata per essere estendibile ad altri codici o modelli di rumore.
+La libreria è orientata a uso didattico e di ricerca ed è progettata per essere facilmente estendibile.
 
 ---
 
 ## Struttura del progetto
 
-La libreria è suddivisa in tre moduli principali:
+La libreria è organizzata in quattro moduli principali.
 
 ### 1. Encoder
 
 Il modulo `encoder` implementa l’**encoding di Shor a nove qubit**.
 
-Funzionalità principali:
-- Accetta in input un **circuito quantistico iniziale** (stato logico su un singolo qubit).
-- Costruisce automaticamente il circuito di encoding secondo il codice di Shor.
-- Restituisce il circuito codificato pronto per essere inviato a un canale rumoroso.
-
-L’encoder isola completamente la logica di codifica, consentendo di lavorare in modo trasparente con circuiti arbitrari.
+Funzionalità:
+- Riceve in input un **circuito quantistico iniziale** o uno stato logico su singolo qubit.
+- Costruisce il circuito di encoding secondo il codice di Shor.
+- Restituisce il circuito codificato pronto per la trasmissione.
 
 ---
 
 ### 2. Channel Simulator
 
-Il modulo `channel_simulator` consente di simulare diversi **modelli di canale quantistico**, applicabili al circuito codificato.
+Il modulo `channel_simulator` permette di simulare diversi **canali quantistici**, applicabili al circuito codificato.
 
-Canali supportati:
-- **Canale ideale**: nessun errore applicato.
-- **Canale con errori di Pauli ideali**: applicazione stocastica di errori X, Y e Z.
-- **Canale di depolarizzazione**: simulazione della perdita di informazione tramite rumore isotropo.
-- **Canale di amplitude damping**: modellazione del decadimento energetico.
-- **Canale di phase damping**: simulazione della decoerenza di fase.
+Canali disponibili:
+- **Canale ideale** (assenza di rumore).
+- **Canale con errori di Pauli ideali** (X, Y, Z stocastici).
+- **Canale di depolarizzazione**.
+- **Canale di amplitude damping**.
+- **Canale di phase damping**.
 
-Il simulatore è progettato per permettere l’aggiunta semplice di nuovi canali o modelli di rumore.
+Ogni canale può essere parametrizzato tramite probabilità di errore o coefficienti di rumore.
 
 ---
 
 ### 3. Decoder
 
-Il modulo `decoder` gestisce la fase finale del processo.
+Il modulo `decoder` gestisce la fase di decoding del circuito ricevuto.
 
-Modalità di decoding disponibili:
-- **Decoding con correzione di Shor**: applica la procedura completa di rilevazione e correzione degli errori.
-- **Decoding banale**: esegue il decoding senza alcuna correzione, utile come baseline di confronto.
+Modalità supportate:
+- **Decoding con correzione di Shor**, con misure di sindrome e operazioni correttive.
+- **Decoding banale**, senza alcuna correzione, usato come riferimento.
 
-Il decoder permette di valutare l’efficacia del codice confrontando i risultati con e senza correzione.
+---
+
+### 4. Circuit Builder
+
+Il modulo `circuit_builder` integra le funzionalità degli altri moduli e consente di costruire **circuiti completi end-to-end**.
+
+Funzionalità:
+- Inizializzazione del qubit logico a partire da **valori arbitrari dello stato iniziale**.
+- Applicazione automatica dell’encoding di Shor.
+- Inserimento di un canale rumoroso con **probabilità di errore specificate dall’utente**.
+- Scelta della strategia di decoding (con o senza correzione).
+- Produzione di un unico circuito quantistico completo, pronto per la simulazione.
+
+Questo modulo rappresenta il punto di ingresso principale per esperimenti e benchmark.
 
 ---
 
 ## Workflow tipico
 
-1. Definizione di un circuito quantistico iniziale.
-2. Encoding tramite il modulo `encoder`.
-3. Applicazione di un canale rumoroso tramite `channel_simulator`.
-4. Decoding finale con o senza correzione tramite `decoder`.
-5. Analisi dei risultati.
+1. Definizione dello stato iniziale del qubit logico.
+2. Costruzione automatica del circuito completo tramite `circuit_builder`.
+3. Simulazione del circuito su backend quantistico o simulatore.
+4. Analisi dei risultati con e senza correzione degli errori.
 
 ---
 
 ## Requisiti
 
 - Python 3.x  
-- Framework di simulazione quantistica compatibile (es. Qiskit, se utilizzato dal progetto)
+- Framework di simulazione quantistica compatibile (ad esempio Qiskit, se utilizzato dal progetto)
 
-I requisiti specifici sono elencati nel file `requirements.txt`.
+I requisiti dettagliati sono riportati in `requirements.txt`.
 
 ---
 
 ## Obiettivi del progetto
 
-- Fornire una base modulare per lo studio della quantum error correction.
-- Permettere il confronto tra diversi modelli di rumore.
-- Valutare l’efficacia del codice di Shor in scenari realistici.
-- Facilitare estensioni verso altri codici di correzione quantistica.
+- Studiare il comportamento del codice di Shor in presenza di diversi modelli di rumore.
+- Confrontare trasmissioni corrette e non corrette.
+- Fornire una base modulare per l’estensione verso altri codici di quantum error correction.
+- Facilitare esperimenti riproducibili e configurabili.
 
 ---
 
 ## Stato del progetto
 
-Il progetto è in sviluppo e focalizzato sulla correttezza concettuale e sulla chiarezza strutturale. Non è ottimizzato per l’esecuzione su hardware quantistico reale.
+Il progetto è in sviluppo ed è focalizzato sulla chiarezza concettuale e sulla correttezza teorica. Non è ottimizzato per l’esecuzione su hardware quantistico reale.
 
 ---
 
 ## Licenza
 
 Specificare la licenza nel file `LICENSE`.
-
