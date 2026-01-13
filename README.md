@@ -1,5 +1,7 @@
 # Quantum Error Correction Library – Shor Code
 
+![Esempio di un circuito](/circuits_img/no_noise.png)
+
 Libreria Python per la simulazione della **quantum error correction** basata sul **codice di Shor a 9 qubit**. Il progetto fornisce strumenti modulari per costruire, trasmettere e decodificare circuiti quantistici soggetti a rumore, con particolare attenzione alla separazione tra encoding, canale e decoding.
 
 La libreria è orientata a uso didattico e di ricerca ed è progettata per essere facilmente estendibile.
